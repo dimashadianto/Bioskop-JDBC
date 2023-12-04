@@ -20,7 +20,7 @@ public class Main {
 //        System.out.println(customerRepo.getById(1));
 
         FilmRepoImpl filmRepo = new FilmRepoImpl(con);
-        System.out.println(filmRepo.selectAll());
+//        System.out.println(filmRepo.selectAll());
 //        filmRepo.create(new Film("Titanic", 120, "2023-12-4", 35000, 2));
 //        filmRepo.update(new Film(2, "Heros", 100, "2023-12-02", 35000, 1));
 //        filmRepo.delete(5);
@@ -32,7 +32,7 @@ public class Main {
 
         SeatRepoImpl seatRepo = new SeatRepoImpl(con);
 //        System.out.println(seatRepo.selectAll());
-//        seatRepo.create(new Seat("E1", 5));
+//        seatRepo.create(new Seat("A5", 1));
 //        seatRepo.update(new Seat(1, "A1", 1));
 //        seatRepo.delete(1);
 //        System.out.println(seatRepo.getById(1));
@@ -41,7 +41,7 @@ public class Main {
 //        System.out.println(theaterRepo.selectAll());
 //        theaterRepo.create(new Theater("Studio 5", 50, 1));
 //        theaterRepo.update(new Theater(5, "Sudio 5", 50, 2));
-//        theaterRepo.delete(5);
+        theaterRepo.delete(1);
 //        System.out.println(theaterRepo.getById(1));
 
         TicketRepoImpl ticketRepo = new TicketRepoImpl(con);

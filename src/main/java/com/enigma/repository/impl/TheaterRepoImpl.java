@@ -74,16 +74,52 @@ public class TheaterRepoImpl implements TheaterRepo {
     @Override
     public void delete(Integer id) {
         Theater tDelete = getById(id);
-        if (tDelete != null || id < 0) {
+        if (tDelete != null || id > 0) {
             try {
-                PreparedStatement pr = con.prepareStatement("DELETE FROM t_theater WHERE id = ?");
-                pr.setInt(1, id);
-                pr.executeUpdate();
-
-                System.out.println("Successfully delete theater");
+                if (checkExistTheaterId(id)) {
+                    System.out.println("Cannot delete theater because has ticket transactions");
+                } else {
+                    con.setAutoCommit(false);
+                    deleteSeatByTheaterId(id);
+                    PreparedStatement pr = con.prepareStatement("DELETE FROM t_theater WHERE id = ?");
+                    pr.setInt(1, id);
+                    pr.executeUpdate();
+                    con.commit();
+                    System.out.println("Successfully delete theater");
+                }
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
+        } else System.out.println("Theater id not exist");
+    }
+
+    private boolean checkExistTheaterId(Integer theaterId) {
+        try {
+            PreparedStatement pr = con.prepareStatement("SELECT COUNT(s.theater_id) AS ticket_count FROM trx_ticket tt JOIN t_seat s ON s.id = tt.seat_id WHERE s.theater_id = ?");
+            pr.setInt(1, theaterId);
+            ResultSet resultSet = pr.executeQuery();
+            if (resultSet.next()) {
+                int ticketCount = resultSet.getInt("ticket_count");
+                return ticketCount > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    private void deleteSeatByTheaterId(Integer theaterId) {
+        try {
+            PreparedStatement pr = con.prepareStatement("DELETE from t_seat where theater_id = ?");
+            pr.setInt(1, theaterId);
+            pr.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -105,4 +141,5 @@ public class TheaterRepoImpl implements TheaterRepo {
         }
         return null;
     }
+
 }
